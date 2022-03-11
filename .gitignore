@@ -5,3 +5,6 @@ firmware/obj/
 *.swp
 qt/build-qt-Desktop_Qt_5_*
 qt/qt.pro.user*
+bin/
+build-qt-Desktop-Debug/
+build/
