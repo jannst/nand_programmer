@@ -51,6 +51,7 @@ static uint32_t blink_interval_ms = BLINK_NOT_MOUNTED;
 
 void led_blinking_task(void);
 void hid_task(void);
+void usb_loopback_task(void);
 
 /*------------- MAIN -------------*/
 int main(void)
@@ -63,11 +64,35 @@ int main(void)
     tud_task(); // tinyusb device task
     led_blinking_task();
 
+    usb_loopback_task();
     //hid_task();
   }
 
   return 0;
 }
+
+
+// USB bits
+void usb_loopback_task(void) {
+  static uint8_t rx_buf[64];
+  static uint count = 0;
+
+    if ( tud_vendor_available() ) {
+        puts("tud_vendor_available = true");
+        count = tud_vendor_read(&rx_buf[0], 64);
+        if (count > 0) {
+            printf("revd packet and read %d bytes", count);
+            printf("string: %.*s",count,rx_buf);
+            rx_buf[1] = 'X';
+            tud_vendor_write(&rx_buf, count);
+        }
+    }
+
+    //if(tud_vendor_write_available()) {
+//
+  //  }
+}
+
 
 //--------------------------------------------------------------------+
 // Device callbacks
