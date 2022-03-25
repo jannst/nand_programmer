@@ -1,48 +1,28 @@
 #!/usr/bin/env python3
 
-#
-# Copyright (c) 2020 Raspberry Pi (Trading) Ltd.
-#
-# SPDX-License-Identifier: BSD-3-Clause
-#
+import usb_handler;
+import logging
+import threading
+import time
 
 # sudo pip3 install pyusb
 
-import usb.core
-import usb.util
+format = "%(asctime)s: %(message)s"
+logging.basicConfig(format=format, level=logging.INFO,datefmt="%H:%M:%S")
 
-# find our device
-dev = usb.core.find(idVendor=0xaffe, idProduct=0x0404)
 
-# was it found?
-if dev is None:
-    raise ValueError('Device not found')
+logging.info("init USB connection");
+usb_handler.init_usb();
 
-# get an endpoint instance
-cfg = dev.get_active_configuration()
-intf = cfg[(0, 0)]
 
-outep = usb.util.find_descriptor(
-    intf,
-    # match the first OUT endpoint
-    custom_match= \
-        lambda e: \
-            usb.util.endpoint_direction(e.bEndpointAddress) == \
-            usb.util.ENDPOINT_OUT)
+x = threading.Thread(target=usb_handler.continous_read)
+x.start()
 
-inep = usb.util.find_descriptor(
-    intf,
-    # match the first IN endpoint
-    custom_match= \
-        lambda e: \
-            usb.util.endpoint_direction(e.bEndpointAddress) == \
-            usb.util.ENDPOINT_IN)
+while True:
+    time.sleep(1)
+    num_packets_sec = usb_handler.packet_counter;
+    usb_handler.packet_counter = 0;
+    logging.info('bytes per sec: %s' % (num_packets_sec * 512 * 8));
 
-assert inep is not None
-assert outep is not None
 
-test_string = "Hello World!"
-outep.write(test_string)
-from_device = inep.read(len(test_string))
-
-print("Device Says: {}".format(''.join([chr(x) for x in from_device])))
+#print("Device Says: {}".format()

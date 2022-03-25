@@ -72,25 +72,47 @@ int main(void)
 }
 
 
-// USB bits
-void usb_loopback_task(void) {
-  static uint8_t rx_buf[64];
-  static uint count = 0;
+void tud_vendor_rx_cb(uint8_t itf) {
+  printf("new data on EP %d\n", itf); 
+}
 
+// USB bits
+static char writeStr[4096] = "lalala this is a tst ;=) I will just fill the buffer to a lengthlalala this is a tst ;=) I will just fill the buffer to a length";
+void usb_loopback_task(void) {
+  //static uint8_t rx_buf[64];
+  //static uint count = 0;
+
+    if(tud_vendor_mounted()) {
+      if(tud_vendor_write_available() >=4096) {
+        tud_vendor_write(writeStr, 4096);
+        //puts("wrote string");
+      }
+    }
+
+
+    /*
     if ( tud_vendor_available() ) {
+
+        //if(tub_read_a)
+
         puts("tud_vendor_available = true");
+
+        //printf("bytes for wrinting available: %d\n", tud_vendor_write_available());
+        //tud_vendor_write(writeStr, strlen(writeStr));
+
+
+        /*
         count = tud_vendor_read(&rx_buf[0], 64);
         if (count > 0) {
-            printf("revd packet and read %d bytes", count);
-            printf("string: %.*s",count,rx_buf);
+            printf("revd packet and read %d bytes\n", count);
+            printf("string: %.*s\n",count,rx_buf);
             rx_buf[1] = 'X';
             tud_vendor_write(&rx_buf, count);
         }
     }
+    */
 
-    //if(tud_vendor_write_available()) {
-//
-  //  }
+
 }
 
 
@@ -139,6 +161,7 @@ void led_blinking_task(void)
   // Blink every interval ms
   if ( board_millis() - start_ms < blink_interval_ms) return; // not enough time
   start_ms += blink_interval_ms;
+
 
   board_led_write(led_state);
   led_state = 1 - led_state; // toggle
