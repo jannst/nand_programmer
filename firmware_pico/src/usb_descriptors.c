@@ -24,7 +24,6 @@
  */
 
 #include "tusb.h"
-#include "usb_descriptors.h"
 
 
 #define USB_PID   0x0404

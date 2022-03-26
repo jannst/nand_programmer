@@ -22,7 +22,7 @@ while True:
     time.sleep(1)
     num_packets_sec = usb_handler.packet_counter;
     usb_handler.packet_counter = 0;
-    logging.info('bytes per sec: %s' % (num_packets_sec * 512 * 8));
+    logging.info('bytes per sec: %s' % (num_packets_sec * 512));
 
 
 #print("Device Says: {}".format()

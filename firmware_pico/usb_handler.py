@@ -40,14 +40,18 @@ def init_usb():
     assert outep is not None
 
 packet_counter=0;
+read_size=512;
 
 def continous_read():
     global packet_counter;
     while True:
-        from_device = inep.read(512)
+        from_device = inep.read(read_size)
+        #read_str = ''.join([chr(x) for x in from_device])
+        #for i in range(0,read_size,64):
+        #    read_str = ''.join('{:02x}'.format(x) for x in from_device[i : i+4])
+        #    print(read_str)
         packet_counter +=1;
 
-        #read_str = ''.join([chr(x) for x in from_device])
         #if read_str == "lalala this is a tst ;=) I will just fill the buffer to a length":
         #    packet_counter +=1;
         #else:

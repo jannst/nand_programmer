@@ -30,8 +30,6 @@
 #include "bsp/board.h"
 #include "tusb.h"
 
-#include "usb_descriptors.h"
-
 //--------------------------------------------------------------------+
 // MACRO CONSTANT TYPEDEF PROTYPES
 //--------------------------------------------------------------------+
@@ -69,11 +67,6 @@ int main(void)
   }
 
   return 0;
-}
-
-
-void tud_vendor_rx_cb(uint8_t itf) {
-  printf("new data on EP %d\n", itf); 
 }
 
 // USB bits
